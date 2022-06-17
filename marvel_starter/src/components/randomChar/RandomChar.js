@@ -1,22 +1,57 @@
 import './randomChar.scss';
-import thor from '../../resources/img/thor.jpeg';
 import mjolnir from '../../resources/img/mjolnir.png';
+import MarvelService from '../../services/MarvelServices'
 
-const RandomChar = () => {
+import {Component} from 'react';
+
+class RandomChar extends Component {
+  constructor(props){
+      super(props);
+      this.updateChar();
+  }
+  //Почему метод вызывается в конструкторе ? Что такое конструктор ? 
+  state = {
+    name: null,
+    description: null,
+    thumbnail: null,
+    homepage: null,
+    wiki: null
+  }
+
+  
+  marvelServices = new MarvelService();
+//   1011000
+  updateChar = () => {
+    const id = Math.floor(Math.random() * (1011400 -1011000) + 1011000);
+    this.marvelServices
+      .getCharacter(id)
+      .then(res => {
+        this.setState({
+            name: res.data.results[0].name,
+            description: res.data.results[0].description,
+            thumbnail: res.data.results[0].thumbnail.path + '.' + res.data.results[0].thumbnail.extension,
+            homepage: res.data.results[0].urls[0].url,
+            wiki:  res.data.results[0].urls[1].url
+        })
+      })
+  }
+
+  render(){
+    const {name, description, thumbnail, homepage, wiki} = this.state;
     return (
         <div className="randomchar">
             <div className="randomchar__block">
-                <img src={thor} alt="Random character" className="randomchar__img"/>
+                <img src={thumbnail} alt="Random character" className="randomchar__img"/>
                 <div className="randomchar__info">
-                    <p className="randomchar__name">Thor</p>
+                    <p className="randomchar__name">{name}</p>
                     <p className="randomchar__descr">
-                        As the Norse God of thunder and lightning, Thor wields one of the greatest weapons ever made, the enchanted hammer Mjolnir. While others have described Thor as an over-muscled, oafish imbecile, he's quite smart and compassionate...
+                     {description}
                     </p>
                     <div className="randomchar__btns">
-                        <a href="#" className="button button__main">
+                        <a href={homepage} className="button button__main">
                             <div className="inner">homepage</div>
                         </a>
-                        <a href="#" className="button button__secondary">
+                        <a href={wiki} className="button button__secondary">
                             <div className="inner">Wiki</div>
                         </a>
                     </div>
@@ -37,6 +72,7 @@ const RandomChar = () => {
             </div>
         </div>
     )
+  } 
 }
 
 export default RandomChar;
