@@ -18,25 +18,19 @@ class RandomChar extends Component {
     wiki: null
   }
 
-  
   marvelServices = new MarvelService();
-//   1011000
+
   updateChar = () => {
     const id = Math.floor(Math.random() * (1011400 -1011000) + 1011000);
     this.marvelServices
       .getCharacter(id)
+//Можно просто прикрутить к асинку then на похуях? 
       .then(res => {
-        this.setState({
-            name: res.data.results[0].name,
-            description: res.data.results[0].description,
-            thumbnail: res.data.results[0].thumbnail.path + '.' + res.data.results[0].thumbnail.extension,
-            homepage: res.data.results[0].urls[0].url,
-            wiki:  res.data.results[0].urls[1].url
-        })
+        this.setState(res)
       })
-  }
-
-  render(){
+    }
+    //В стейте нельзя использовать методы ? 
+    render(){
     const {name, description, thumbnail, homepage, wiki} = this.state;
     return (
         <div className="randomchar">

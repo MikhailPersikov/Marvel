@@ -1,22 +1,26 @@
-class Test {
-  constructor(name,mail){
-    this.name = name;
-    this.mail = mail;
-  }
-  sayBye = () => {
-    console.log('Bye')
-  }
+const str = `Originally a partner of the mind-altering assassin Black Swan, Nijo spied on Deadpool as part of the Swan's plan to exact revenge for Deadpool falsely taking credit for the Swan's assassination of the Four Winds crime family, which included Nijo's brother`
+
+// checkLenghtDescription = (desc) => {
+//   let index;
+//   let counter = 220;
+//   if(desc.length <= counter) return desc
+//   else {
+//     function checkSpaceInDesc(){
+//       if(counter > 170) {
+//         counter--
+//         if(desc[counter] === ' ') index = counter;
+//         checkSpaceInDesc();
+//       }
+//     }
+//     checkSpaceInDesc();
+//   }
+
+//   return desc.slice(0,index) + ' ...';
+// }
+
+function checkLenghtDescription(desc) {
+  
 }
 
-const oleg = new Test("Vanya","mail.ru");
 
-class Vanya extends Test {
-  sayHi(){
-    console.log('yo')
-  }
-}
-
-oleg.sayBye()
-
-console.log(oleg);
-console.log(Vanya)
+console.log(checkLenghtDescription(str))
