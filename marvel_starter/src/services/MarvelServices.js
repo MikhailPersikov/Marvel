@@ -43,6 +43,7 @@ class MarvelService {
     const validDescription  = this.checkLenghtDescription(description);
     const noDescription = 'There is no description for this character.';
 
+    console.log(res)
     return {
       name: res.data.results[0].name,
             description: (description) ? validDescription : noDescription ,
