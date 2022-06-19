@@ -21,21 +21,37 @@ class MarvelService {
   }
 
   checkLenghtDescription = (desc) => {
-    let validDescription;
-    if(desc.length > 220) {
-      console.log('str')
+    let index;
+    let counter = 220;
+    if(desc.length <= counter) return desc
+    else {
+      function checkSpaceInDesc(){
+        if(counter > 170) {
+          counter--
+          if(desc[counter] === ' ') index = counter;
+          checkSpaceInDesc();
+        }
+      }
+      checkSpaceInDesc();
     }
+    return desc.slice(0,index) + ' ...';
+    //Тут можно оптимизировать.
   }
 
   _transformCharacter = (res) => {
+    const description = res.data.results[0].description;
+    const validDescription  = this.checkLenghtDescription(description);
+    const noDescription = 'There is no description for this character.';
+
     return {
       name: res.data.results[0].name,
-            description: res.data.results[0].description,
+            description: (description) ? validDescription : noDescription ,
             thumbnail: res.data.results[0].thumbnail.path + '.' + res.data.results[0].thumbnail.extension,
             homepage: res.data.results[0].urls[0].url,
-            wiki:  res.data.results[0].urls[1].url
+            wiki: res.data.results[0].urls[1].url
     }
   }
+
 } 
 
 export default MarvelService;

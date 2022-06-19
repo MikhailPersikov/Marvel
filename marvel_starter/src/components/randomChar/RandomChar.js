@@ -1,8 +1,9 @@
-import './randomChar.scss';
-import mjolnir from '../../resources/img/mjolnir.png';
+import {Component} from 'react';
+import Spinner from '../spinner/Spinner'
 import MarvelService from '../../services/MarvelServices'
 
-import {Component} from 'react';
+import mjolnir from '../../resources/img/mjolnir.png';
+import './randomChar.scss';
 
 class RandomChar extends Component {
   constructor(props){
@@ -11,27 +12,34 @@ class RandomChar extends Component {
   }
   //Почему метод вызывается в конструкторе ? Что такое конструктор ? 
   state = {
-    name: null,
-    description: null,
-    thumbnail: null,
-    homepage: null,
-    wiki: null
+   char: {},
+   loading: true,
   }
 
   marvelServices = new MarvelService();
 
+  onCharLoaded = (char) => {
+    this.setState({char})
+  }
+
   updateChar = () => {
     const id = Math.floor(Math.random() * (1011400 -1011000) + 1011000);
+    console.log(id);
     this.marvelServices
       .getCharacter(id)
-//Можно просто прикрутить к асинку then на похуях? 
-      .then(res => {
-        this.setState(res)
-      })
+      .then(this.onCharLoaded)
     }
+//Можно просто прикрутить к асинку then на похуях? 
+    //   .then(res => {
+    //     this.setState(res)
+    //   })
     //В стейте нельзя использовать методы ? 
     render(){
-    const {name, description, thumbnail, homepage, wiki} = this.state;
+    const {char: {name, description, thumbnail, homepage, wiki}, loading} = this.state;
+    
+    if(loading) {
+        return <Spinner/>
+    }
     return (
         <div className="randomchar">
             <div className="randomchar__block">
