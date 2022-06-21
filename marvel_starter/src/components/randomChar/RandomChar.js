@@ -1,17 +1,14 @@
 import {Component} from 'react';
 import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/errorMessage'
+import ErrorMessage from '../errorMessage/ErrorMessage'
 import MarvelService from '../../services/MarvelServices'
 
 import mjolnir from '../../resources/img/mjolnir.png';
 import './randomChar.scss';
 
 class RandomChar extends Component {
-  constructor(props){
-      super(props);
-      this.updateChar();
-  }
-  //Почему метод вызывается в конструкторе ? Что такое конструктор ? 
+ 
+//  Что такое конструктор ? 
   state = {
    char: {},
    loading: true,
@@ -19,6 +16,19 @@ class RandomChar extends Component {
   }
 
   marvelServices = new MarvelService();
+
+  componentDidMount() {
+    this.updateChar();
+    this.componentWillUnmount();
+  }
+
+  componentWillUnmount() {
+    this.setState({
+        char: {},
+        loading: true,
+        error: false,
+    })
+  }
 
   onCharLoaded = (char) => {
     this.setState({char,loading: false})
@@ -31,25 +41,29 @@ class RandomChar extends Component {
     })
   }
 
+  onUpdateChar = () => {
+   this.componentDidMount()
+  }
+
   updateChar = () => {
-    const id = Math.floor(Math.random() * (1011400 -1011000) + 1011000);
-    console.log(id);
-    this.marvelServices
-      .getCharacter(1011278)
+      const id = Math.floor(Math.random() * (1011400 -1011000) + 1011000);
+      this.marvelServices
+      .getCharacter(id)
       .then(this.onCharLoaded)
       .catch(this.onError)
     }
-//Можно просто прикрутить к асинку then на похуях? 
-    //   .then(res => {
-    //     this.setState(res)
-    //   })
-    //В стейте нельзя использовать методы ? 
+    
+    // updateAllChars = () => {
+    //     this.marvelServices
+    //     .getAllCharacters().then(res => console.log(res))
+    // }
+
     render(){
     const {char, loading, error} = this.state;
     const errorMessage = error ? <ErrorMessage/> : null;
     const spinner = loading ? <Spinner/> : null;
     const content = !(loading || error) ? <View char={char}/> : null;
-
+    
     return (
         <div className="randomchar">
         {errorMessage}
@@ -64,21 +78,25 @@ class RandomChar extends Component {
                     Or choose another one
                 </p>
                 <button className="button button__main">
-                    <div className="inner">try it</div>
+                    <div className="inner"
+                    onClick={this.onUpdateChar}
+                    >try it</div>
                 </button>
                 <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>
             </div>
         </div>
     )
-  } 
+} 
 }
 
 const View = ({char}) => {
     const {name, description, thumbnail, homepage, wiki} = char;
-
+    const image = char.availableImage;
+    const className = (image) ? "randomchar__img" : "randomchar__img center"
+  
     return (
         <div className="randomchar__block">
-            <img src={thumbnail} alt="Random character" className="randomchar__img"/>
+            <img src={thumbnail} alt="Random character" className={className}/>
             <div className="randomchar__info">
                 <p className="randomchar__name">{name}</p>
                 <p className="randomchar__descr">
