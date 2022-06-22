@@ -8,7 +8,11 @@ import decoration from '../../resources/img/vision.png';
 
 class App extends Component {
     state = {
-        showRandomChar: true
+        selectedChar: null
+    }
+
+    onCharSelected = () => {
+        console.log('wow wow wow')
     }
 
    render() {
@@ -18,7 +22,7 @@ class App extends Component {
             <main>
             <RandomChar/>
             <div className="char__content">
-                <CharList/>
+                <CharList onCharSelected={this.onCharSelected}/>
                 <CharInfo/>
             </div>
             <img className="bg-decoration" src={decoration} alt="vision"/>
