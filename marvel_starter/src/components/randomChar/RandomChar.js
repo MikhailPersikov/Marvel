@@ -112,7 +112,6 @@ const View = ({char}) => {
                 </div>
             </div>
         </div>
-
     )
 }
 
