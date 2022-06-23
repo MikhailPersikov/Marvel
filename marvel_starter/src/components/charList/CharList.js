@@ -37,11 +37,11 @@ class CharList extends Component {
 
     renderItems(arr) {
         const items = arr.map((item,i) => {
-            console.log(item)
         const image = this.state.allChars[i].availableImage;
         const imageStyle = (image) ? "randomchar__img" : "randomchar__img center"
             return (
                 <li 
+                    onClick={()=>{this.props.onCharSelected(item.id)}}
                     className="char__item"
                     key={item.id}>
                         <img src={item.thumbnail} alt={item.name} className={imageStyle}/>

@@ -14,17 +14,12 @@ class MarvelService {
 
   getAllCharacters = async () => {
     const res = await this.getResource(`${this._apiBase}characters?${this._limitCharacters}&offset=210&${this._apiKey}`);
-    const allChars = res.data.results
-    const arrWithAllChars = []; 
-    allChars.forEach(char => {
-      arrWithAllChars.push(this._transformAllCharacter(char))
-    })
-    return arrWithAllChars;
+    return res.data.results.map(this._transformCharacter);
   }
 
   getCharacter = async (id) => {
     const res = await this.getResource(`${this._apiBase}characters/${id}?${this._apiKey}`);
-    return this._transformCharacter(res);
+    return this._transformCharacter(res.data.results[0]);
   }
 
   checkLenghtDescription = (desc) => {
@@ -51,37 +46,23 @@ class MarvelService {
     else return true;
   }
 
-  _transformCharacter = (res) => {
-    const description = res.data.results[0].description;
+  _transformCharacter = (char) => {
+    const description = char.description;
     const validDescription  = this.checkLenghtDescription(description);
     const noDescription = 'There is no description for this character.';
-    const image = res.data.results[0].thumbnail.path + '.' + res.data.results[0].thumbnail.extension
+    const image = char.thumbnail.path + '.' + char.thumbnail.extension
     
     return {
-      name: res.data.results[0].name,
-            description: (description) ? validDescription : noDescription ,
-            thumbnail: image,
-            homepage: res.data.results[0].urls[0].url,
-            wiki: res.data.results[0].urls[1].url,
-            availableImage: this.checkAvailableImage(image),
+      id: char.id,
+      name: char.name,
+      description: (description) ? validDescription : noDescription ,
+      thumbnail: image,
+      homepage: char.urls[0].url,
+      wiki: char.urls[1].url,
+      availableImage: this.checkAvailableImage(image),
     }
   }
 
-  _transformAllCharacter = (res) => {
-    const description = res.description;
-    const validDescription  = this.checkLenghtDescription(description);
-    const noDescription = 'There is no description for this character.';
-    const image = res.thumbnail.path + '.' + res.thumbnail.extension;
-
-    return {
-      name: res.name,
-            description: (description) ? validDescription : noDescription ,
-            thumbnail: image,
-            homepage: res.urls[0].url,
-            wiki: res.urls[1].url,
-            availableImage: this.checkAvailableImage(image),
-    }
-  }
 } 
 
 export default MarvelService;

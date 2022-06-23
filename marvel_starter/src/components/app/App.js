@@ -11,8 +11,10 @@ class App extends Component {
         selectedChar: null
     }
 
-    onCharSelected = () => {
-        console.log('wow wow wow')
+    onCharSelected = (id) => {
+       this.setState({
+        selectedChar: id
+       })
     }
 
    render() {
@@ -23,7 +25,7 @@ class App extends Component {
             <RandomChar/>
             <div className="char__content">
                 <CharList onCharSelected={this.onCharSelected}/>
-                <CharInfo/>
+                <CharInfo charId={this.state.selectedChar}/>
             </div>
             <img className="bg-decoration" src={decoration} alt="vision"/>
             </main>
