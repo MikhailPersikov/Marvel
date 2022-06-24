@@ -90,9 +90,8 @@ class RandomChar extends Component {
 }
 
 const View = ({char}) => {
-    const {name, description, thumbnail, homepage, wiki} = char;
-    const image = char.availableImage;
-    const className = (image) ? "randomchar__img" : "randomchar__img center"
+    const {name, description, thumbnail, homepage, wiki,availableImage} = char;
+    const className = (availableImage) ? "randomchar__img" : "randomchar__img center"
   
     return (
         <div className="randomchar__block">

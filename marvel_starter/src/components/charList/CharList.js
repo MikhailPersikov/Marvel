@@ -10,22 +10,34 @@ class CharList extends Component {
     state = {
         allChars: [],
         loading: true,
-        error: false
+        error: false,
+        newItemLoading: false
     }
 
     marvelServices = new MarvelService();
 
     componentDidMount() {
-        this.marvelServices.getAllCharacters()
-          .then(this.onCharListLoaded)
-          .catch(this.onError)
+       this.onRequest();
     }
 
-    onCharListLoaded = (allChars) => {
+    onRequest = (offset) => {
+        this.MarvelService.getAllCharacters(offset)
+            .then(this.onCharListLoaded)
+            .catch(this.onError)
+      }
+    
+    onCharListLoading = () => {
         this.setState({
-            allChars,
-            loading: false
+            newItemLoading: true
         })
+    }
+    
+    onCharListLoaded = (allChars) => {
+        this.setState(({allChars})=>({
+                allChars: [...allChars, ...newCharList],
+                loading: false,
+                newItemLoading: false,
+        }))
     }
 
     onError = () => {
