@@ -1,8 +1,3 @@
-const plus = (i) => {
-  return (i++)
+function foo() {
+  return 2
 }
-
-console.log(plus((()=>{ return 2} )()))
-console.log(plus((()=>{ return 2} )()))
-console.log(plus((()=>{ return 2} )()))
-console.log(plus((()=>{ return 2} )()))
