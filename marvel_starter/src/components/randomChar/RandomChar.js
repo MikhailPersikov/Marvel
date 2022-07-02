@@ -19,6 +19,7 @@ const RandomChar = () => {
         const timerId = setInterval(updateChar, 60000);
 
         return () => {
+            console.log("delete")
             clearInterval(timerId)
         }
     }, [])
@@ -38,6 +39,7 @@ const RandomChar = () => {
     }
 
     const updateChar = () => {
+        console.log('work')
         const id = Math.floor(Math.random() * (1011400 - 1011000)) + 1011000;
         onCharLoading();
         marvelService
