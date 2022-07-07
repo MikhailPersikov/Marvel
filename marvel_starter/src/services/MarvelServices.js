@@ -1,29 +1,24 @@
-class MarvelService {
-  _apiBase = 'https://gateway.marvel.com:443/v1/public/';
-  _apiKey = 'apikey=c5d6fc8b83116d92ed468ce36bac6c62';
-  _limitCharacters = 'limit=9';
-  _baseOffset = 210;
+import useHttp from "../hooks/http.hook";
 
-  getResource =  async url => {
-    let res = await fetch(url);
+const useMarvelService = () => {
+  const {loading, request, error,clearError} = useHttp();
 
-    if(!res.ok) {
-      throw new Error(`Could not fetch ${url}, status: ${res.status}`);
-    }
-    return await res.json();
+  const _apiBase = 'https://gateway.marvel.com:443/v1/public/';
+  const _apiKey = 'apikey=c5d6fc8b83116d92ed468ce36bac6c62';
+  const _limitCharacters = 'limit=9';
+  const _baseOffset = 210;
+
+  const getAllCharacters = async (offset = _baseOffset ) => {
+    const res = await request(`${_apiBase}characters?${_limitCharacters}&offset=${offset}&${_apiKey}`);
+    return res.data.results.map(_transformCharacter);
   }
 
-  getAllCharacters = async (offset = this._baseOffset ) => {
-    const res = await this.getResource(`${this._apiBase}characters?${this._limitCharacters}&offset=${offset}&${this._apiKey}`);
-    return res.data.results.map(this._transformCharacter);
+  const getCharacter = async (id) => {
+    const res = await request(`${_apiBase}characters/${id}?${_apiKey}`);
+    return _transformCharacter(res.data.results[0]);
   }
 
-  getCharacter = async (id) => {
-    const res = await this.getResource(`${this._apiBase}characters/${id}?${this._apiKey}`);
-    return this._transformCharacter(res.data.results[0]);
-  }
-
-  checkLenghtDescription = (desc) => {
+  const checkLenghtDescription = (desc) => {
     let index;
     let counter = 220;
     if(desc.length <= counter) return desc
@@ -41,15 +36,15 @@ class MarvelService {
     //Тут можно оптимизировать.
   }
 
-  checkAvailableImage = (img) => {
+  const checkAvailableImage = (img) => {
     const notAvailable = 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg';
     if(img === notAvailable ) return false
     else return true;
   }
 
-  _transformCharacter = (char) => {
+  const _transformCharacter = (char) => {
     const description = char.description;
-    const validDescription  = this.checkLenghtDescription(description);
+    const validDescription  = checkLenghtDescription(description);
     const noDescription = 'There is no description for this character.';
     const image = char.thumbnail.path + '.' + char.thumbnail.extension
     
@@ -60,11 +55,12 @@ class MarvelService {
       thumbnail: image,
       homepage: char.urls[0].url,
       wiki: char.urls[1].url,
-      availableImage: this.checkAvailableImage(image),
+      availableImage: checkAvailableImage(image),
       comics: char.comics.items
     }
   }
 
+  return ({loading, error, getAllCharacters, getCharacter,clearError})
 } 
 
-export default MarvelService;
+export default useMarvelService;

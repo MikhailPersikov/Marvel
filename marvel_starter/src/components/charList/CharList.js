@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import MarvelService from '../../services/MarvelServices';
+import useMarvelService from '../../services/MarvelServices';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
@@ -8,27 +8,20 @@ import './charList.scss';
 const CharList = (props) => {
 
     const [allChars, setAllChars] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
     const [newItemLoading, setNewItemLoading] = useState(false);
     const [offset, setOffset] = useState(210);
     const [charEnded, setCharEnded] = useState(false);
 
-    const marvelServices = new MarvelService();
+    const {loading,error,getAllCharacters} = useMarvelService();
 
     useEffect(() => {
-        onRequest();
+        onRequest(offset, true);
     }, [])
 
-    const onRequest = (offset) => {
-        onCharListLoading();
-        marvelServices.getAllCharacters(offset)
+    const onRequest = (offset, initial) => {
+        initial ?  setNewItemLoading(false) : setNewItemLoading(true);
+        getAllCharacters(offset)
             .then(onCharListLoaded)
-            .catch(onError)
-    }
-
-    const onCharListLoading = () => {
-        setNewItemLoading(true);
     }
 
     const onCharListLoaded = (newCharList) => {
@@ -37,34 +30,11 @@ const CharList = (props) => {
             ended = true;
         }
 
-
-        // this.setState(({ offset, allChars }) => ({
-        //     allChars: [...allChars, ...newCharList],
-        //     loading: false,
-        //     newItemLoading: false,
-        //     offset: offset + 9,
-        //     charEnded: ended
-        // }))
-
         setAllChars(allChars => [...allChars, ...newCharList]);
-        setLoading(loading => false);
         setNewItemLoading(newItemLoading => false)
         setOffset(offset => offset + 9)
         setCharEnded(charEnded => ended);
     }
-
-    const onError = () => {
-        setError(true);
-        setLoading(loading => false);
-    }
-
-    // const itemsRefs = useRef([]);
-
-    // const focusOnItem = (id) => {
-    //     itemsRefs.current.forEach(item => item.CharList.remove('char__item_selected'))
-    //     itemsRefs.current[id].classList.add('char__item_selected');
-    //     itemsRefs.current[id].focus();
-    // }
 
     function renderItems(arr) {
         const items = arr.map((item, i) => {
@@ -95,14 +65,16 @@ const CharList = (props) => {
 
     const items = renderItems(allChars);
     const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || error) ? items : null;
+    const spinner = loading && !newItemLoading ? <Spinner /> : null;
+    // const content = !(loading || error) ? items : null;
+    // Если оставить так то герои исчезают с страници , только потом подгружаются.
 
     return (
         <div className="char__list">
             {errorMessage}
             {spinner}
-            {content}
+            {/* {content} нужен items */}
+            {items}
             <button
                 className="button button__main button__long"
                 disabled={newItemLoading}
